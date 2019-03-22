@@ -1,6 +1,8 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
+var  mongoose= require("mongoose");
+
 var ObjectID = mongodb.ObjectID;
 
 var CONTACTS_COLLECTION = "contacts";
@@ -12,18 +14,29 @@ app.use(bodyParser.json());
 var distDir = __dirname + "/dist/";
 app.use(express.static(distDir));
 
+
+const mongoDB = "mongodb+srv://test_db:6sJRYV0Mv93V841X@cluster0-tr877.mongodb.net/test"
+mongoose.connect(mongoDB,{ useNewUrlParser: true });
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
-var db;
+// const db = mongoose.connection;
 
 // Connect to the database before starting the application server.
-mongodb.MongoClient.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mydb", { useNewUrlParser: true }, function (err, client) {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
+// Set up mongoose connection
+// const mongoDB = process.env.MONGODB_URI
+// mongoose.connect(mongoDB,{ useNewUrlParser: true });
+// mongoose.Promise = global.Promise;
+// const db = mongoose.connection;
+//   if (err) {
+//     console.log(err);
+//     process.exit(1);
+//   }
 
   // Save database object from the callback for reuse.
-  db = client.db();
+  //db = client.db();
   console.log("Database connection ready");
 
   // Initialize the app.
@@ -31,7 +44,6 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI || "mongodb://localhost:2701
     var port = server.address().port;
     console.log("App now running on port", port);
   });
-});
 
 // CONTACTS API ROUTES BELOW
 
